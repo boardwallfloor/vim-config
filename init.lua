@@ -652,7 +652,9 @@ require('lazy').setup({
         --
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
+        php = { 'php_cs_fixer' },
         javascript = { { 'prettierd', 'prettier' } },
+        go = { 'goimports', 'gofumpt' },
       },
     },
   },
@@ -820,6 +822,12 @@ require('lazy').setup({
       end)
     end,
   },
+  {
+    'numToStr/Comment.nvim',
+    opts = {
+      -- add any options here
+    },
+  },
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
     config = function()
@@ -857,6 +865,7 @@ require('lazy').setup({
       --  Check out: https://github.com/echasnovski/mini.nvim
     end,
   },
+  { 'tpope/vim-fugitive' },
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
