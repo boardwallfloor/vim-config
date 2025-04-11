@@ -792,8 +792,40 @@ require('lazy').setup({
       vim.g.everforest_enable_italic = true
       -- vim.g.everforest_transparent_background = 2
       vim.g.everforest_background = 'soft'
-      vim.cmd.colorscheme 'everforest'
     end,
+  },
+  {
+    'nyoom-engineering/oxocarbon.nvim',
+    -- Add in any other configuration;
+    --   event = foo,
+    --   config = bar
+    --   end,
+  },
+  { 'dasupradyumna/midnight.nvim' },
+  {
+    'rebelot/kanagawa.nvim',
+    compile = false, -- enable compiling the colorscheme
+    undercurl = true, -- enable undercurls
+    commentStyle = { italic = true },
+    functionStyle = {},
+    keywordStyle = { italic = true },
+    statementStyle = { bold = true },
+    typeStyle = {},
+    transparent = false, -- do not set background color
+    dimInactive = false, -- dim inactive window `:h hl-NormalNC`
+    terminalColors = true, -- define vim.g.terminal_color_{0,17}
+    colors = { -- add/modify theme and palette colors
+      palette = {},
+      theme = { wave = {}, lotus = {}, dragon = {}, all = {} },
+    },
+    overrides = function(colors) -- add/modify highlights
+      return {}
+    end,
+    theme = 'wave', -- Load "wave" theme
+    background = { -- map the value of 'background' option to a theme
+      dark = 'wave', -- try "dragon" !
+      light = 'lotus',
+    },
   },
   { -- You can easily change to a different colorscheme.
     -- Change the name of the colorscheme plugin below, and then
@@ -947,6 +979,12 @@ require('lazy').setup({
     event = 'VeryLazy',
     opts = {},
   },
+  { 'github/copilot.vim', event = 'VeryLazy' },
+  {
+    'pmizio/typescript-tools.nvim',
+    dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
+    opts = {},
+  },
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.
@@ -991,5 +1029,6 @@ require('lazy').setup({
   },
 })
 
+vim.cmd.colorscheme 'everforest'
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
