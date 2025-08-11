@@ -168,6 +168,20 @@ vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagn
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
+-- Custom command to get the current directory
+vim.api.nvim_create_user_command('GetCurrentDir', function()
+  -- This version copies the directory of the CURRENT FILE
+  local current_dir = vim.fn.expand '%:p:h'
+  vim.fn.setreg('+', current_dir)
+  print('Copied to clipboard: ' .. current_dir)
+
+  -- To copy the CURRENT WORKING DIRECTORY instead, comment the lines
+  -- above and uncomment the lines below:
+  -- local current_dir = vim.fn.getcwd()
+  -- vim.fn.setreg('+', current_dir)
+  -- print('Copied to clipboard: ' .. current_dir)
+end, { desc = 'Copy current directory path to clipboard' })
+
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
@@ -342,7 +356,6 @@ require('lazy').setup({
   { -- Fuzzy Finder (files, lsp, etc)
     'nvim-telescope/telescope.nvim',
     event = 'VimEnter',
-    branch = '0.1.x',
     dependencies = {
       'nvim-lua/plenary.nvim',
       { -- If encountering errors, see telescope-fzf-native README for installation instructions
@@ -685,17 +698,17 @@ require('lazy').setup({
         return {
           timeout_ms = 500,
           lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
+          stop_after_first = true,
         }
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
-        -- Conform can also run multiple formatters sequentially
+
+        -- You can also run multiple formatters sequentially
         -- python = { "isort", "black" },
-        --
-        -- You can use a sub-list to tell conform to run *until* a formatter
-        -- is found.
+
         php = { 'php_cs_fixer' },
-        javascript = { { 'prettierd', 'prettier' } },
+        javascript = { 'prettierd', 'prettier' }, -- fixed: removed nested {}
         go = { 'goimports', 'gofumpt' },
         markdown = { 'prettierd', 'prettier' },
       },
@@ -1019,12 +1032,19 @@ require('lazy').setup({
     event = 'VeryLazy',
     opts = {},
   },
-  { 'github/copilot.vim', event = 'VeryLazy' },
+  -- { 'github/copilot.vim', event = 'VeryLazy' },
   {
     'pmizio/typescript-tools.nvim',
     dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
     opts = {},
   },
+  {
+    'supermaven-inc/supermaven-nvim',
+    config = function()
+      require('supermaven-nvim').setup {}
+    end,
+  },
+
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.
