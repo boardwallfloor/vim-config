@@ -50,7 +50,7 @@ vim.diagnostic.config({
 
 -- [[ Basic Keymaps ]]
 vim.keymap.set("i", "jj", "<Esc>", { desc = "Exit insert mode" })
-vim.keymap.set('n', '<Esc>', '<cmd.nohlsearch<CR>')
+vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 
@@ -225,12 +225,13 @@ require('lazy').setup({
     config = function()
       local capabilities = require('blink.cmp').get_lsp_capabilities()
 
-      -- Define your servers here. Mason will ensure they are installed.
       local servers = {
         lua_ls = {
           settings = { Lua = { diagnostics = { globals = { 'vim' } } } }
         },
         gopls = {},
+        -- Markdown LSP
+        marksman = {},
         omnisharp = {
           handlers = {
             ["textDocument/definition"] = function(...)
@@ -242,24 +243,21 @@ require('lazy').setup({
         },
       }
 
-      -- 1. Setup Mason
       require('mason').setup()
 
-      -- 2. Tools that aren't LSPs (Formatters, Debuggers, Linters)
       local ml_tools = {
-        'netcoredbg', -- C# Debugger
-        'csharpier',  -- C# Formatter
-        'gofumpt',    -- Go Formatter
-        'goimports',  -- Go Import management
+        'netcoredbg',
+        'csharpier',
+        'gofumpt',
+        'goimports',
+        'stylua',
       }
 
-      -- 3. Use Mason Tool Installer to keep everything in sync
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, ml_tools)
 
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
-      -- 4. Setup Mason LSPConfig with handlers to auto-configure servers
       require('mason-lspconfig').setup {
         handlers = {
           function(server_name)
@@ -330,7 +328,7 @@ require('lazy').setup({
     end
   },
 
-  -- 23. Conform (Auto-Formatting managed by Mason tools)
+  -- 23. Conform (Auto-Formatting)
   {
     'stevearc/conform.nvim',
     opts = {
@@ -345,6 +343,27 @@ require('lazy').setup({
         cs = { 'csharpier' },
       },
     },
+  },
+
+  -- 24. Render-Markdown (MODERN MD SUPPORT)
+  {
+    'MeanderingProgrammer/render-markdown.nvim',
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' },
+    opts = {
+      file_types = { 'markdown' },
+    },
+    ft = { 'markdown' },
+  },
+
+  -- 25. Markdown Preview (BROWSER PREVIEW)
+  {
+    "iamcco/markdown-preview.nvim",
+    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+    build = "cd app && yarn install",
+    init = function()
+      vim.g.mkdp_filetypes = { "markdown" }
+    end,
+    ft = { "markdown" },
   },
 
   -- Core Kickstart Plugins
